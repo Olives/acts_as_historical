@@ -1,4 +1,0 @@
-require "history/engine"
-
-module History
-end

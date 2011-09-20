@@ -1,7 +1,0 @@
-module History
-
-  def save_history(options = {})
-    DynamicObserver.observe self
-  end
-
-end

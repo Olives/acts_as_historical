@@ -1,3 +1,0 @@
-class WatchedModel < ActiveRecord::Base
-
-end

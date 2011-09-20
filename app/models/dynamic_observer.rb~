@@ -1,5 +1,0 @@
-class DynamicObserver < ActiveRecord::Observer
-
-  observe WatchMe
-
-end
