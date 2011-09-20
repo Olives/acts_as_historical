@@ -1,0 +1,3 @@
+class WatchMe < ActiveRecord::Base
+
+end
