@@ -1,4 +1,4 @@
 Rails.application.routes.draw do
 
-  mount History::Engine => "/history"
+  mount HistoryEngine::Engine => "/history_engine"
 end

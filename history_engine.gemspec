@@ -1,17 +1,17 @@
 $:.push File.expand_path("../lib", __FILE__)
 
 # Maintain your gem's version:
-require "history/version"
+require "history_engine/version"
 
 # Describe your gem and declare its dependencies:
 Gem::Specification.new do |s|
-  s.name        = "history"
-  s.version     = History::VERSION
+  s.name        = "history_engine"
+  s.version     = HistoryEngine::VERSION
   s.authors     = ["Kyle d'Oliveira"]
   s.email       = ["kdoliveira@bravenet.com"]
-  s.homepage    = ""
-  s.summary     = "Engine that stores and displays history for models"
-  s.description = "TODO: Description of History."
+  s.homepage    = "TODO"
+  s.summary     = "An engine to record save history for models"
+  s.description = "TODO: Description of HistoryEngine."
 
   s.files = Dir["{app,config,db,lib}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.rdoc"]
   s.test_files = Dir["test/**/*"]

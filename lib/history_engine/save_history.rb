@@ -1,4 +1,4 @@
-module History
+module HistoryEngine
 
   def save_history(options = {})
     after_save do |record|

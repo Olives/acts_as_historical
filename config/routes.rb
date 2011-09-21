@@ -1,2 +1,2 @@
-History::Engine.routes.draw do
+HistoryEngine::Engine.routes.draw do
 end
