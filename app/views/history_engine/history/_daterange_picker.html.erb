@@ -1,0 +1,27 @@
+  <label style="float:left" for="date_range">
+    <span> Date Range </span>
+  </label>
+  <div class="date_range_selector">
+  <%= text_field_tag :date_range, @date_range, :autocomplete => "off" %>
+  <button id="daterangepicker_button"
+          style="float:right;left:-4px"
+          class="ui-button ui-widget ui-state-default ui-button-icon-only ui-combobox ui-corner-right ui-button-icon"
+          role="button">
+    <span class="ui-icon ui-icon-triangle-1-s">&nbsp;</span>
+    <span class="ui-button-text">&nbsp;</span>
+  </button>
+</div>
+
+<%= hidden_field :report, :date_range_type, :value => @date_range_type %>
+<script type="text/javascript" charset="utf-8">
+  $("button#daterangepicker_button").click(function(event){
+    $(".date_range_selector input").click()
+    return false;
+  });
+  $(".date_range_selector input").daterangepicker();
+  $(".date_range_selector input").keypress(function(event){
+    // 9 = tab, 13 = enter
+    if(event.keyCode == '0')
+      $("#report_date_range_type").val("")
+    });
+</script>

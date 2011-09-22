@@ -1,0 +1,27 @@
+<h1>Listing second_watched_models</h1>
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Watcher</th>
+    <th>Status</th>
+    <th>Actions </th>
+  </tr>
+
+<% @second_watched_models.each do |second_watched_model| %>
+  <tr>
+    <td><%= second_watched_model.name %></td>
+    <td><%= second_watched_model.watcher %></td>
+    <td><%= second_watched_model.status %></td>
+    <td>
+      <%= link_to 'Show', second_watched_model %>
+      <%= link_to 'Edit', edit_second_watched_model_path(second_watched_model) %>
+      <%= link_to 'Destroy', second_watched_model, confirm: 'Are you sure?', method: :delete %>
+    </td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Second watched model', new_second_watched_model_path %>

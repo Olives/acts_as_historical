@@ -1,0 +1,2 @@
+module WatchedModelsHelper
+end

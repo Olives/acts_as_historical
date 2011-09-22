@@ -1,0 +1,34 @@
+<tr>
+  <td><%= time_ago_in_words history.created_at %> ago</td>
+  <td>
+    <% if @by == "model" %>
+      <%= history.display_value(:editor) %>
+    <% else %>
+      <%= history.display_value(:model) %>
+    <% end %>
+  </td>
+  <td>
+    <% if history.history_dependable %>
+      <div>
+        <strong><%= history.display_value(:dependent) %></strong>
+      </div>
+    <% end %>
+    <% history.changed_fields.each do |field, changes| %>
+      <div>
+        <div class="field_changed"><%= t(field)%>:</div>
+        <div class="value_changed">
+          <% if changes[:old] %>
+            <div><%= t "history_engine.old_value", :value => changes[:old] %></div>
+          <% end %>
+          <div>
+            <% if !changes[:new].nil? %>
+              <%= t "history_engine.new_value", :value => changes[:new] %>
+            <% else %>
+              <%= t "history_engine.removed_value" %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </td>
+</tr>

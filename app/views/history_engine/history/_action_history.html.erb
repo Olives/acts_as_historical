@@ -1,0 +1,21 @@
+<div class="history_engine">
+  <%= render :partial => "daterange_picker" %>
+  <div style="clear:both"></div>
+  <table <%= "class='sortable'" if !@history.first.nil? %>>
+    <thead>
+      <tr>
+        <th><%= t "history_engine.date"%></th>
+        <th><%= t "history_engine.#{@by == "model" ? "who_changed" : "what_changed"}" %></th>
+        <th class="sorttable_nosort"> <%= t "history_engine.changes"%> </th>
+      </tr>
+    </thead>
+    <tbody>
+      <%= render :partial => "history", :collection => @history %>
+      <% if @history.empty? %>
+        <tr>
+          <td colspan='3'> <%= t "history_engine.no_actions"%> </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

@@ -1,0 +1,9 @@
+<p id="notice"><%= notice %></p>
+<div> <%= @dependent_model.name %> </div>
+<div> <%= @dependent_model.status %> </div>
+<div> <%= @dependent_model.watched_model.name %> </div>
+<div> <%= @dependent_model.second_watched_model.name %> </div>
+
+
+<%= link_to 'Edit', edit_dependent_model_path(@dependent_model) %> |
+<%= link_to 'Back', dependent_models_path %>

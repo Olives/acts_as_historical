@@ -11,22 +11,40 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110919231011) do
+ActiveRecord::Schema.define(:version => 20110921183926) do
 
   create_table "action_histories", :force => true do |t|
-    t.integer  "editor_id"
+    t.integer  "history_editor_id"
+    t.string   "history_editor_type"
     t.datetime "created_at"
-    t.string   "recordable_type"
-    t.integer  "recordable_id"
+    t.string   "history_recordable_type"
+    t.integer  "history_recordable_id"
+    t.string   "history_dependable_type"
+    t.integer  "history_dependable_id"
     t.text     "changed_fields"
+  end
+
+  create_table "dependent_models", :force => true do |t|
+    t.string  "name"
+    t.integer "watched_model_id"
+    t.integer "second_watched_model_id"
+    t.string  "status"
   end
 
   create_table "second_watched_models", :force => true do |t|
     t.string "name"
+    t.string "status"
+    t.string "watcher"
+  end
+
+  create_table "users", :force => true do |t|
+    t.string "username"
   end
 
   create_table "watched_models", :force => true do |t|
     t.string "name"
+    t.string "status"
+    t.string "watcher"
   end
 
 end

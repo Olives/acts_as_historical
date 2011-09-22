@@ -1,0 +1,8 @@
+<p id="notice"><%= notice %></p>
+<div><%= @watched_model.name %></div>
+<div><%= @watched_model.watcher %></div>
+<div><%= @watched_model.status %></div>
+
+
+<%= link_to 'Edit', edit_watched_model_path(@watched_model) %> |
+<%= link_to 'Back', watched_models_path %>

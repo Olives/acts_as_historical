@@ -1,0 +1,2 @@
+module DependentModelsHelper
+end

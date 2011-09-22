@@ -1,0 +1,31 @@
+<% title t(".title") %>
+<table>
+  <% @histories.each_pair do |feed, histories| %>
+    <tbody>
+      <tr>
+        <th style="border-bottom:0px;padding-top: 15px;" colspan=3>
+          <%= action_button :collapsed, "", :class => "collapsible"%>
+          <%= link_to feed.name, edit_feed_path(feed) %>
+        </th>
+      </tr>
+    </tbody>
+    <tbody style="margin-left: 5px;display:none">
+      <tr>
+        <th><%= t ".date"%></th>
+        <th><%= t ".what_changed" %></th>
+        <th class="sorttable_nosort"> <%= t ".changes"%> </th>
+      </tr>
+      <% histories.each do |history| %>
+        <%= render :partial => "history_entry", :locals => {:history => history, :by_user => false} %>
+      <% end %>
+    </tbody>
+  <% end %>
+</table>
+
+
+<script type="text/javascript">
+  $("a.collapsible").click(function(event){
+    $(this).toggleClass("collapsed expanded").parents("tbody").next("tbody").toggle('fast')
+    event.preventDefault();
+  });
+</script>

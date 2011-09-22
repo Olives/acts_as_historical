@@ -1,0 +1,20 @@
+<%= form_for(@second_watched_model) do |f| %>
+  <% if @second_watched_model.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@second_watched_model.errors.count, "error") %> prohibited this second_watched_model from being saved:</h2>
+
+      <ul>
+      <% @second_watched_model.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+  <div> Name:  <%= f.text_field :name %> </div>
+  <div> Watcher:  <%= f.text_field :watcher %> </div>
+  <div> Status:  <%= f.text_field :status %> </div>
+
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

@@ -1,0 +1,21 @@
+<%= form_for(@dependent_model) do |f| %>
+  <% if @dependent_model.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@dependent_model.errors.count, "error") %> prohibited this dependent_model from being saved:</h2>
+
+      <ul>
+      <% @dependent_model.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+  <div> Name:  <%= f.text_field :name %> </div>
+  <div> Status:  <%= f.text_field :status %> </div>
+  <div> Watched Model:  <%= f.select :watched_model_id, WatchedModel.all.collect{|w| [w.name, w.id]} %> </div>
+  <div> Second Model:  <%= f.select :second_watched_model_id, SecondWatchedModel.all.collect{|w| [w.name, w.id]} %> </div>
+
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

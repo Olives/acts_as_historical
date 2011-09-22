@@ -1,0 +1,11 @@
+en:
+  history_engine:
+    display: "%{model}: %{value}"
+    date: "Date"
+    what_changed: "Model"
+    who_changed: "Editor"
+    changes: "Changes"
+    no_actions: "No Actions were Taken in this Timeframe"
+    old_value: "Was: '%{value}'"
+    new_value: "Updated to: '%{value}'"
+    removed_value: "Attribute removed"

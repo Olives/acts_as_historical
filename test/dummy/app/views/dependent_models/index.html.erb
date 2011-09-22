@@ -1,0 +1,28 @@
+<h1>Listing dependent_models</h1>
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Status</th>
+    <th>Watched Model</th>
+    <th>Second Model</th>
+  </tr>
+
+<% @dependent_models.each do |dependent_model| %>
+  <tr>
+    <td> <%= dependent_model.name %> </td>
+    <td> <%= dependent_model.status %> </td>
+    <td> <%= dependent_model.watched_model.name %> </td>
+    <td> <%= dependent_model.second_watched_model.name %> </td>
+    <td>
+      <%= link_to 'Show', dependent_model %>
+      <%= link_to 'Edit', edit_dependent_model_path(dependent_model) %>
+      <%= link_to 'Destroy', dependent_model, confirm: 'Are you sure?', method: :delete %>
+    </td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Dependent model', new_dependent_model_path %>
