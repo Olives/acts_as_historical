@@ -9,9 +9,7 @@
   </td>
   <td>
     <% if history.history_dependable %>
-      <div>
-        <strong><%= history.display_label(:dependent) %></strong>
-      </div>
+      <div><%= history.display_label(:dependent) %></div>
     <% end %>
     <% history.changed_fields.each do |field, changes| %>
       <div>
