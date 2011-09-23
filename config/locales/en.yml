@@ -12,3 +12,4 @@ en:
     old_value: "Was: '%{value}'"
     new_value: "Updated to: '%{value}'"
     removed_value: "Attribute removed"
+    deleted: "Deleted"

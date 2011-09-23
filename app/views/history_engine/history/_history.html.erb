@@ -11,10 +11,11 @@
     <% if history.history_dependable %>
       <div><%= history.display_label(:dependent) %></div>
     <% end %>
+    <dl>
     <% history.changed_fields.each do |field, changes| %>
-      <div>
-        <div class="field_changed"><%= t(field)%>:</div>
-        <div class="value_changed">
+      <dt class="indent"><%= t(field)%> </dt>
+      <% if changes %>
+        <dd>
           <% if changes[:old] %>
             <div><%= t "history_engine.old_value", :value => changes[:old] %></div>
           <% end %>
@@ -25,8 +26,9 @@
               <%= t "history_engine.removed_value" %>
             <% end %>
           </div>
-        </div>
-      </div>
+        </dd>
+      <% end %>
     <% end %>
+    </dl>
   </td>
 </tr>

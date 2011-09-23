@@ -30,7 +30,6 @@ class ActionHistory < ActiveRecord::Base
       changes.symbolize_keys!
       changed_attributes = remove_unwanted_fields(options, changes)
       changed_fields = {}
-
       changes.each_pair do |field, old_value|
         changed_fields["#{model.class.to_s.underscore}.#{field}"] = {:old => old_value, :new => model.send(field)}
       end
@@ -51,6 +50,9 @@ class ActionHistory < ActiveRecord::Base
       end
     end
 
+    def dependent_destroy(model)
+
+    end
 
     private
     def remove_unwanted_fields(options, changes)
