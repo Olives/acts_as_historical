@@ -1,5 +1,11 @@
 module HistoryEngine
 
+  def history_editor(options = {})
+    class_eval {
+      include HistoryEngine::Display
+    }
+  end
+
   #options:
   # store_on: array of methods that return some active record object
   def save_history(options = {})

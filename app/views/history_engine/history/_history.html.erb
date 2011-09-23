@@ -2,15 +2,15 @@
   <td><%= time_ago_in_words history.created_at %> ago</td>
   <td>
     <% if @by == "model" %>
-      <%= history.display_value(:editor) %>
+      <%= history.display_label(:editor) %>
     <% else %>
-      <%= history.display_value(:model) %>
+      <%= history.display_label(:model) %>
     <% end %>
   </td>
   <td>
     <% if history.history_dependable %>
       <div>
-        <strong><%= history.display_value(:dependent) %></strong>
+        <strong><%= history.display_label(:dependent) %></strong>
       </div>
     <% end %>
     <% history.changed_fields.each do |field, changes| %>

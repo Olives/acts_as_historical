@@ -64,14 +64,14 @@ class ActionHistory < ActiveRecord::Base
     end
   end
 
-  def display_value(what)
+  def display_label(what)
     case what
     when :dependent
-      history_dependable.history_display history_recordable if history_dependable
+      history_dependable.history_label history_recordable if history_dependable
     when :model
-      history_recordable.history_display
+      history_recordable.history_label
     when :editor
-      history_editor.history_display
+      history_editor.history_label
     end
   end
 

@@ -1,5 +1,42 @@
 <div class="history_engine">
-  <%= render :partial => "daterange_picker" %>
+  <%= form_tag({}) do %>
+    <%= render :partial => "daterange_picker" %>
+    <%= hidden_field_tag :type, @history_obj.class %>
+    <%= hidden_field_tag :id, @history_obj.id %>
+    <%= hidden_field_tag :query_type, "" %>
+    <%= hidden_field_tag :query_id, "" %>
+    <div style="clear:both;padding-top:5px">
+      <% if @by == "model" %>
+        <label class="form_label" for="query_selecotr"><%= t "history_engine.editor_select" %>:</label>
+        <%= select_tag :query_selector, grouped_options_for_select(@editors, "", "All") %>
+      <% else %>
+        <label class="form_label" for="query_selector"><%= t "history_engine.model_select" %>:</label>
+        <%= select_tag :query_selector, grouped_options_for_select(@models, "", "All") %>
+      <% end %>
+    </div>
+    <div class="form_button">
+      <button> Filter </button>
+    </div>
+  <% end %>
+  <script type="text/javascript">
+    $(".history_engine form").submit(function(){
+      var option = $("#query_selector option:selected")
+      if(option.parent("optgroup").length){
+        $("#query_id").val(option.val())
+        $("#query_type").val(option.attr('data-class'))
+      }
+    });
+    $(function(){
+      <% @class_mapping.each_pair do |klass,optgroup_mapping| %>
+        $("<%= optgroup_mapping.collect{|k,v| "optgroup[label='#{k}'] option[value='#{v}']"}.join(',') %>",
+          "#query_selector").attr('data-class', '<%= klass %>')
+      <% end %>
+      <% if @query_obj %>
+      $("#query_selector optgroup[label='<%= @query_obj.history_type %>'] option[value='<%=@query_obj.id%>']")
+      .attr('selected', true)
+      <% end %>
+    })
+  </script>
   <div style="clear:both"></div>
   <table <%= "class='sortable'" if !@history.first.nil? %>>
     <thead>

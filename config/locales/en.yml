@@ -1,5 +1,8 @@
 en:
   history_engine:
+    date_select: "Select a Date Range"
+    model_select: "Select a Model"
+    editor_select: "Select an Editor"
     display: "%{model}: %{value}"
     date: "Date"
     what_changed: "Model"
