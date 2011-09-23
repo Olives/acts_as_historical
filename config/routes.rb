@@ -1,4 +1,4 @@
-HistoryEngine::Engine.routes.draw do
+ActsAsHistorical::Engine.routes.draw do
 
   match('for_editor/:id/:type',
         :controller => :history, :action => :for_editor, :as => :history_for_editor)

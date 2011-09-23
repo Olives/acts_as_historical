@@ -1,4 +1,4 @@
-module HistoryEngine
+module ActsAsHistorical
   module Display
 
     def history_type(model = nil)

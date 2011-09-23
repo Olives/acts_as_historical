@@ -1,6 +1,7 @@
-class ActionHistory < ActiveRecord::Base
+class History < ActiveRecord::Base
 
-  serialize :changed_fields, Hash
+  serialize :before, Hash
+  serialize :after, Hash
 
   scope :todays, where(["created_at >= ?", Date.today.to_time.utc])
   scope :yesterdays, where(["created_at >= ? AND created_at < ?", (Date.today-1).to_time.utc, Date.today.to_time.utc])
@@ -21,9 +22,7 @@ class ActionHistory < ActiveRecord::Base
     where(:history_recordable_id => model.id, :history_recordable_type => model.class.to_s)
   }
 
-  belongs_to :history_editor, :polymorphic => true
-  belongs_to :history_recordable, :polymorphic => true
-  belongs_to :history_dependable, :polymorphic => true
+  belongs_to :historical, :polymorphic => true
 
   class << self
     def record_changes(options, model, changes, editor)

@@ -1,4 +1,4 @@
 # desc "Explaining what the task does"
-# task :history_engine do
+# task :acts_as_historical do
 #   # Task goes here
 # end

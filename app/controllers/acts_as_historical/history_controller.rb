@@ -1,4 +1,4 @@
-class HistoryEngine::HistoryController < ApplicationController
+class ActsAsHistorical::HistoryController < ApplicationController
 
   before_filter :object_lookup
   before_filter :filter_object

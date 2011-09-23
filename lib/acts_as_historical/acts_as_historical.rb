@@ -1,8 +1,8 @@
-module HistoryEngine
+module ActsAsHistorical
 
-  def history_editor(options = {})
+  def editor_for_historical(options = {})
     class_eval {
-      include HistoryEngine::Display
+      include ActsAsHistorical::Display
     }
   end
 
@@ -13,16 +13,16 @@ module HistoryEngine
 
   # Any belongs_to relation either needs to be an editor, have history_saved on it, or have the foreign key not saved
 
-  def save_history(options = {})
+  def acts_as_historical(options = {})
     after_save do |record|
-      ActionHistory.record_changes(options, record, record.changed_attributes.dup, Thread.current[:actual_user])
+      History.record_changes(options, record, record.changed_attributes.dup, Thread.current[:actual_user])
     end
     before_destroy do |record|
-      ActionHistory.dependent_destory(options.merge(:deleted => true), record,
+      History.dependent_destory(options.merge(:deleted => true), record,
                                    record.changed_attributes.dup, Thread.current[:actual_user])
     end
     class_eval {
-      include HistoryEngine::Display
+      include ActsAsHistorical::Display
     }
   end
 

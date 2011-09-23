@@ -1,12 +1,12 @@
 $:.push File.expand_path("../lib", __FILE__)
 
 # Maintain your gem's version:
-require "history_engine/version"
+require "acts_as_historical/version"
 
 # Describe your gem and declare its dependencies:
 Gem::Specification.new do |s|
-  s.name        = "history_engine"
-  s.version     = HistoryEngine::VERSION
+  s.name        = "acts_as_historical"
+  s.version     = ActsAsHistorical::VERSION
   s.authors     = ["Kyle d'Oliveira"]
   s.email       = ["kdoliveira@bravenet.com"]
   s.homepage    = "TODO"
