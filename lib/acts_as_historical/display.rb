@@ -1,7 +1,7 @@
 module ActsAsHistorical
   module Display
 
-    def history_type(model = nil)
+    def history_type
       self.class.to_s.titleize
     end
 
@@ -9,8 +9,8 @@ module ActsAsHistorical
       name
     end
 
-    def history_label(model = nil)
-      "#{history_type(model)}: #{history_display(model)}"
+    def history_label(model=nil)
+      I18n.t "acts_as_historical.display", :model => history_type, :value => history_display(model)
     end
 
   end

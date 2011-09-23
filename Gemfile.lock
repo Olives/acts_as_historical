@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    history_engine (0.0.1)
+    acts_as_historical (0.0.1)
       jquery-rails
       rails (~> 3.1.0)
       sass-rails
@@ -117,6 +117,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  history_engine!
+  acts_as_historical!
   mysql2
   ruby-debug19

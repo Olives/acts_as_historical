@@ -25,7 +25,9 @@ class History < ActiveRecord::Base
   belongs_to :historical, :polymorphic => true
 
   class << self
-    def record_changes(options, model, changes, editor)
+    def record_changes(options, model, changes=nil)
+      editor = Thead.current[:actual_user]
+      changes = model.attributes unless changes
       changes.symbolize_keys!
       changed_attributes = remove_unwanted_fields(options, changes)
       changed_fields = {}

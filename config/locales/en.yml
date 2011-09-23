@@ -1,5 +1,5 @@
 en:
-  history_engine:
+  acts_as_historical:
     date_select: "Select a Date Range"
     model_select: "Select a Model"
     editor_select: "Select an Editor"

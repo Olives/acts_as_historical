@@ -1,6 +1,6 @@
 class User < ActiveRecord::Base
 
-  history_editor
+  editor_for_historical
 
   def history_type(model=nil)
     :admin

@@ -2,6 +2,6 @@ class WatchedModel < ActiveRecord::Base
 
   has_many :dependent_models
 
-  save_history
+  acts_as_historical track_association: :dependent_models, only: [:name]
 
 end

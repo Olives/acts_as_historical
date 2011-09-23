@@ -13,22 +13,21 @@
 
 ActiveRecord::Schema.define(:version => 20110921183926) do
 
-  create_table "action_histories", :force => true do |t|
-    t.integer  "history_editor_id"
-    t.string   "history_editor_type"
-    t.datetime "created_at"
-    t.string   "history_recordable_type"
-    t.integer  "history_recordable_id"
-    t.string   "history_dependable_type"
-    t.integer  "history_dependable_id"
-    t.text     "changed_fields"
-  end
-
   create_table "dependent_models", :force => true do |t|
     t.string  "name"
     t.integer "watched_model_id"
     t.integer "second_watched_model_id"
     t.string  "status"
+  end
+
+  create_table "histories", :force => true do |t|
+    t.integer  "editor_id"
+    t.datetime "created_at"
+    t.string   "historical_type"
+    t.integer  "historical_id"
+    t.text     "before"
+    t.text     "after"
+    t.string   "item_type"
   end
 
   create_table "second_watched_models", :force => true do |t|
