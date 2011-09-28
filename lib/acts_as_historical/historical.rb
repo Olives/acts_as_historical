@@ -10,14 +10,13 @@ module ActsAsHistorical
   end
 
   #options:
-  # track_association: whenever an association record is added or removed, a record will be saved
   # except: array fields that shouldn't be saved.
   # only: An array of the only fields that should be saved
 
   def acts_as_historical(options = {})
     define_history_options(options)
     has_many :histories, :as => :historical
-    after_save :record_history
+    after_save :record_history if :changed?
     class_eval {
       include ActsAsHistorical::Display
       include ActsAsHistorical::SaveHistory
@@ -33,7 +32,7 @@ module ActsAsHistorical
     [parents].flatten.each do |parent|
       options[:associations_and_keys][parent] = reflect_on_association(parent).foreign_key.intern
       after_save do |record|
-        record.record_dependent_history(parent)
+        record.record_dependent_history(parent) if record.changed?
       end
       after_destroy do |record|
         record.record_parent_remove(parent)
