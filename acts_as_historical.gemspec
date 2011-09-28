@@ -9,9 +9,9 @@ Gem::Specification.new do |s|
   s.version     = ActsAsHistorical::VERSION
   s.authors     = ["Kyle d'Oliveira"]
   s.email       = ["kdoliveira@bravenet.com"]
-  s.homepage    = "TODO"
+  s.homepage    = "https://github.com/Olives/acts_as_historical"
   s.summary     = "An engine to record save history for models"
-  s.description = "TODO: Description of HistoryEngine."
+  s.description = "Added methods to record history on models and views to display it"
 
   s.files = Dir["{app,config,db,lib}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.rdoc"]
   s.test_files = Dir["test/**/*"]
