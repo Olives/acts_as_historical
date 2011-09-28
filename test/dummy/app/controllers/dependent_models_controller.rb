@@ -57,7 +57,12 @@ class DependentModelsController < ApplicationController
   # PUT /dependent_models/1.json
   def update
     @dependent_model = DependentModel.find(params[:id])
-
+    if params[:dependent_model][:watched_model_id].to_i != @dependent_model.watched_model_id
+      @dependent_model.watched_model.dependent_models.delete(@dependent_model)
+    end
+    if params[:dependent_model][:second_watched_model_id].to_i != @dependent_model.second_watched_model_id
+      @dependent_model.second_watched_model.dependent_models.delete(@dependent_model)
+    end
     respond_to do |format|
       if @dependent_model.update_attributes(params[:dependent_model])
         format.html { redirect_to @dependent_model, notice: 'Dependent model was successfully updated.' }

@@ -37,6 +37,10 @@ module Dummy
     # Configure sensitive parameters which will be filtered from the log file.
     config.filter_parameters += [:password]
 
+    config.generators do |g|
+      g.fixture_replacement :factory_girl, :dir => 'spec/factories'
+    end
+
     # Enable the asset pipeline
     config.assets.enabled = true
 

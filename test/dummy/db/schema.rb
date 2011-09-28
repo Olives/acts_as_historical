@@ -21,7 +21,8 @@ ActiveRecord::Schema.define(:version => 20110921183926) do
   end
 
   create_table "histories", :force => true do |t|
-    t.integer  "editor_id"
+    t.string   "history_editable_type"
+    t.integer  "history_editable_id"
     t.datetime "created_at"
     t.string   "historical_type"
     t.integer  "historical_id"

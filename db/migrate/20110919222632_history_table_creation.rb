@@ -2,7 +2,8 @@ class HistoryTableCreation < ActiveRecord::Migration
 
   def up
     create_table :histories do |t|
-      t.integer :editor_id
+      t.string :history_editable_type
+      t.integer :history_editable_id
       t.datetime :created_at
       t.string :historical_type
       t.integer :historical_id

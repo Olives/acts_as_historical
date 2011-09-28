@@ -13,3 +13,4 @@ en:
     new_value: "Updated to: '%{value}'"
     removed_value: "Attribute removed"
     deleted: "Deleted"
+    created: "Created"

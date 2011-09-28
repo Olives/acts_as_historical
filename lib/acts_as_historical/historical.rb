@@ -1,28 +1,22 @@
 module ActsAsHistorical
 
-  # Must be called exactly once
+  # Must be called at least once
   def editor_for_historical(options = {})
     class_eval {
       include ActsAsHistorical::Display
-      has_many :histories, :foreign_key => "editor_id"
+      has_many :history_edits, :as => :history_editable
     }
 
-    History.class_eval {
-      belongs_to :editor, :class_name => "#{self}", :foreign_key => "editor_id"
-    }
   end
 
   #options:
   # track_association: whenever an association record is added or removed, a record will be saved
   # except: array fields that shouldn't be saved.
   # only: An array of the only fields that should be saved
+
   def acts_as_historical(options = {})
     define_history_options(options)
-    [options[:track_association]].flatten.each do |association|
-      reflect_on_association(association).options[:before_add] = :record_add_dependent
-      reflect_on_association(association).options[:before_remove] = :record_remove_dependent
-    end
-
+    has_many :histories, :as => :historical
     after_save :record_history
     class_eval {
       include ActsAsHistorical::Display
@@ -34,13 +28,18 @@ module ActsAsHistorical
   # except: array fields that shouldn't be saved.
   # only: An array of the only fields that should be saved
 
-  def acts_as_historical_dependent(dependants, options={})
-    define_history_options(options)
-    [dependants].flatten.each do |dependent|
-      after_save do |record|
-        record_dependent_history(record, dependent)
+  def acts_as_historical_dependent(parents, options={})
+    options[:parents_and_keys] = {}
+    [parents].flatten.each do |parent|
+      options[:parents_and_keys][parent] = reflect_on_association(parent).foreign_key.intern
+      after_save do
+        record_dependent_history(parent)
+      end
+      after_destroy do
+        record_parent_remove(parent)
       end
     end
+    define_history_options(options )
     class_eval {
       include ActsAsHistorical::Display
       include ActsAsHistorical::SaveHistory
@@ -49,8 +48,10 @@ module ActsAsHistorical
 
   private
   def define_history_options(options)
-    options[:except] ||= []
-    options[:except].concat reflect_on_all_associations(:belongs_to).collect(&:foreign_key)
+    options[:display] ||= {}
+    reflect_on_all_associations(:belongs_to).each do |assoc|
+      options[:display][assoc.foreign_key.intern] = :belongs_to_display
+    end
     define_method(:history_options) do
       options
     end

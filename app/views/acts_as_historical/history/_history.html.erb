@@ -8,26 +8,31 @@
     <% end %>
   </td>
   <td>
-    <% if history.history_dependable %>
-      <div><%= history.display_label(:dependent) %></div>
-    <% end %>
     <dl>
-    <% history.changed_fields.each do |field, changes| %>
-      <dt class="indent"><%= t(field)%> </dt>
-      <% if changes %>
-        <dd>
-          <% if changes[:old] %>
-            <div><%= t "history_engine.old_value", :value => changes[:old] %></div>
-          <% end %>
-          <div>
-            <% if !changes[:new].nil? %>
-              <%= t "history_engine.new_value", :value => changes[:new] %>
-            <% else %>
-              <%= t "history_engine.removed_value" %>
-            <% end %>
-          </div>
-        </dd>
+      <% if history.before.empty? %>
+        <dt><strong><%= t "acts_as_historical.created" %></strong> </dt>
+      <% elsif history.after.empty? %>
+        <dt><strong><%= t "acts_as_historical.deleted" %></strong> </dt>
       <% end %>
+      <% if history.item_type != history.historical_type %>
+        <dt><%= history.display_label(:dependent) %></dt>
+      <% end %>
+
+      <% options = history.after_model.history_options %>
+      <% History.remove_unwanted_fields(options,  history.after.dup).each do |field, value| %>
+        <% unless field == :id || history.before[field] == value ||
+               (options[:display][field.intern] && history.after_model.send(options[:display][field.intern]).nil?) %>
+
+          <dt class="indent"><%= field.to_s.humanize %> </dt>
+          <dd>
+            <% if history.before.key? field %>
+              <div><%= t "acts_as_historical.old_value", :value => history.before_model.send(field) %></div>
+            <% end %>
+            <div>
+              <%= t "acts_as_historical.new_value", :value => history.after_model.send(field) %>
+            </div>
+          </dd>
+        <% end %>
     <% end %>
     </dl>
   </td>

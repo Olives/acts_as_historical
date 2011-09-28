@@ -11,70 +11,99 @@ class History < ActiveRecord::Base
   }
 
   scope :with_editor, lambda{ |model|
-    where(:history_editor_id => model.id, :history_editor_type => model.class.to_s)
-  }
-
-  scope :with_dependent, lambda{ |editor|
-    where(:history_dependable_id => model.id, :history_dependable_type => model.class.to_s)
+    where(:history_editable_id => model.id, :history_editable_type => model.class.to_s)
   }
 
   scope :with_model, lambda { |model|
-    where(:history_recordable_id => model.id, :history_recordable_type => model.class.to_s)
+    where(:historical_id => model.id, :historical_type => model.class.to_s)
   }
 
+
+  belongs_to :history_editable, :polymorphic => true
   belongs_to :historical, :polymorphic => true
 
   class << self
-    def record_changes(options, model, changes=nil)
-      editor = Thead.current[:actual_user]
-      changes = model.attributes unless changes
-      changes.symbolize_keys!
-      changed_attributes = remove_unwanted_fields(options, changes)
-      changed_fields = {}
-      changes.each_pair do |field, old_value|
-        changed_fields["#{model.class.to_s.underscore}.#{field}"] = {:old => old_value, :new => model.send(field)}
+    def record_changes(options, model)
+      editor = Thread.current[:actual_user]
+      after_hash = remove_unwanted_fields(options, model.attributes.dup)
+      if model.changed_attributes.key?("id") || options[:add]
+        before_hash = {}
+      else
+        before_hash = remove_unwanted_fields(options, after_hash.merge(model.changed_attributes.dup))
       end
+      item_type = model.class.to_s
 
-      if changed_fields.any? && editor
-        histories = []
-        if options[:store_on]
-          [options[:store_on]].flatten.each do |who|
-            histories << {:recordable => model.send(who), :dependable => model}
+      if (after_hash != before_hash || options[:remove]) && editor
+        parent_model = history_model(model, options[:parent])
+        history = new(:item_type => item_type, :historical_type => parent_model.class.to_s,
+                      :historical_id => parent_model.id, :history_editable => editor)
+        history.before = options[:remove] ? after_hash : before_hash
+        history.after = options[:remove] ? {} : after_hash
+
+        #If the model's history is stored on a parent, and the parent changes
+        #Instead add a 'remove' history row for the old parent, and an 'add' for the new parent
+        save_history = true
+        if history.before.any? && history.after.any? && options[:parents_and_keys]
+          key = options[:parents_and_keys][options[:parent]]
+          if history.before[key] != history.after[key]
+            history.before_model.record_parent_remove(options[:parent]) if history.before[key]
+            history.after_model.record_parent_add(options[:parent]) if history.after[key]
+            save_history = false
           end
-        else
-          histories << {:recordable => model, :dependable => nil }
         end
-        histories.each do |h|
-          ActionHistory.create(:changed_fields => changed_fields, :history_editor => editor,
-                               :history_recordable => h[:recordable], :history_dependable => h[:dependable])
-        end
+        history.save if save_history
       end
     end
 
-    def dependent_destroy(model)
-
-    end
-
-    private
     def remove_unwanted_fields(options, changes)
-      (options[:except]||[]).concat([:id, :updated_at, :created_at]).each do |unwanted_field|
-        changes.delete(unwanted_field)
+      changes.symbolize_keys!
+
+      [options[:except]||[], [:updated_at, :created_at]].flatten.each do |unwanted_field|
+        changes.delete(unwanted_field.intern)
       end
       if options[:only]
         changes.delete_if{|k, v| !options[:only].include?(k) }
       end
       return changes
     end
+
+    def history_model(model, option)
+      case option
+      when ActiveRecord::Base
+        option
+      when Symbol
+        model.send(option)
+      else
+        model
+      end
+    end
+
+  end
+
+  def before_model
+    return @before_model if @before_model
+    @before_model = item_type.constantize.new(before)
+    @before_model.readonly!
+    @before_model.id = before[:id]
+    @before_model
+  end
+
+  def after_model
+    return @after_model if @after_model
+    @after_model = item_type.constantize.new(after)
+    @after_model.readonly!
+    @after_model.id = after[:id]
+    @after_model
   end
 
   def display_label(what)
     case what
     when :dependent
-      history_dependable.history_label history_recordable if history_dependable
+      (after.empty? ? before_model : after_model).history_label historical
     when :model
-      history_recordable.history_label
+      historical.history_label
     when :editor
-      history_editor.history_label
+      history_editable.history_label
     end
   end
 

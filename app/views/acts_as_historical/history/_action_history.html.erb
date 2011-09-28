@@ -1,4 +1,4 @@
-<div class="history_engine">
+<div class="acts_as_historical">
   <%= form_tag({}) do %>
     <%= render :partial => "daterange_picker" %>
     <%= hidden_field_tag :type, @history_obj.class %>
@@ -7,10 +7,10 @@
     <%= hidden_field_tag :query_id, "" %>
     <div style="clear:both;padding-top:5px">
       <% if @by == "model" %>
-        <label class="form_label" for="query_selecotr"><%= t "history_engine.editor_select" %>:</label>
+        <label class="form_label" for="query_selecotr"><%= t "acts_as_historical.editor_select" %>:</label>
         <%= select_tag :query_selector, grouped_options_for_select(@editors, "", "All") %>
       <% else %>
-        <label class="form_label" for="query_selector"><%= t "history_engine.model_select" %>:</label>
+        <label class="form_label" for="query_selector"><%= t "acts_as_historical.model_select" %>:</label>
         <%= select_tag :query_selector, grouped_options_for_select(@models, "", "All") %>
       <% end %>
     </div>
@@ -19,7 +19,7 @@
     </div>
   <% end %>
   <script type="text/javascript">
-    $(".history_engine form").submit(function(){
+    $(".acts_as_historical form").submit(function(){
       var option = $("#query_selector option:selected")
       if(option.parent("optgroup").length){
         $("#query_id").val(option.val())
@@ -41,16 +41,16 @@
   <table <%= "class='sortable'" if !@history.first.nil? %>>
     <thead>
       <tr>
-        <th><%= t "history_engine.date"%></th>
-        <th><%= t "history_engine.#{@by == "model" ? "who_changed" : "what_changed"}" %></th>
-        <th class="sorttable_nosort"> <%= t "history_engine.changes"%> </th>
+        <th><%= t "acts_as_historical.date"%></th>
+        <th><%= t "acts_as_historical.#{@by == "model" ? "who_changed" : "what_changed"}" %></th>
+        <th class="sorttable_nosort"> <%= t "acts_as_historical.changes"%> </th>
       </tr>
     </thead>
     <tbody>
       <%= render :partial => "history", :collection => @history %>
       <% if @history.empty? %>
         <tr>
-          <td colspan='3'> <%= t "history_engine.no_actions"%> </td>
+          <td colspan='3'> <%= t "acts_as_historical.no_actions"%> </td>
         </tr>
       <% end %>
     </tbody>

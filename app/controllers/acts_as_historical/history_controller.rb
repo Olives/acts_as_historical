@@ -7,17 +7,17 @@ class ActsAsHistorical::HistoryController < ApplicationController
 
   def for_editor
     @by = "editor"
-    @history = ActionHistory.includes(:history_recordable).order("created_at DESC").with_editor(@history_obj)
+    @history = History.includes(:historical).order("created_at DESC").with_editor(@history_obj)
     date_range_query
     @models = Hash.new{|h,k| h[k]=Hash.new(&h.default_proc)}
     @class_mapping = Hash.new{|h,k| h[k]=Hash.new(&h.default_proc)}
     @history.each do |h|
-      obj = h.history_recordable
+      obj = h.historical
       @models[obj.history_type][obj.history_display] =  obj.id
       @class_mapping[obj.class.to_s.underscore][obj.history_type] = obj.id
     end
     if @query_obj
-      @history = @history.includes(:history_dependable).with_model(@query_obj)
+      @history = @history.with_model(@query_obj)
     end
     @models.keys.each{|key| @models[key].sort_by{|k,v| k.downcase}}
     @models = @models.sort_by{|k,v| k.downcase}
@@ -25,19 +25,19 @@ class ActsAsHistorical::HistoryController < ApplicationController
 
   def for_model
     @by = "model"
-    @history = ActionHistory.includes(:history_editor).order("created_at DESC").with_model(@history_obj)
+    @history = History.includes(:history_editable).order("created_at DESC").with_model(@history_obj)
     date_range_query
     @editors = Hash.new{|h,k| h[k]=Hash.new(&h.default_proc)}
     @class_mapping = Hash.new{|h,k| h[k]=Hash.new(&h.default_proc)}
     @history.each do |h|
-      obj = h.history_editor
+      obj = h.history_editable
       @editors[obj.history_type][obj.history_display] =  obj.id
       @class_mapping[obj.class.to_s.underscore][obj.history_type] = obj.id
     end
     @editors.keys.each{|key| @editors[key].sort_by{|k,v| k.downcase}}
     @editors = @editors.sort_by{|k,v| k.downcase}
     if @query_obj
-      @history = @history.includes(:history_dependable).with_editor(@query_obj)
+      @history = @history.with_editor(@query_obj)
     end
   end
 
