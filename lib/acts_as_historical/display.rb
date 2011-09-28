@@ -13,11 +13,6 @@ module ActsAsHistorical
       I18n.t "acts_as_historical.display", :model => history_type, :value => history_display(model)
     end
 
-    private
-    def belongs_to_display
-      nil
-    end
-
   end
 end
 

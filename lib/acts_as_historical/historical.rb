@@ -29,14 +29,14 @@ module ActsAsHistorical
   # only: An array of the only fields that should be saved
 
   def acts_as_historical_dependent(parents, options={})
-    options[:parents_and_keys] = {}
+    options[:associations_and_keys] = {}
     [parents].flatten.each do |parent|
-      options[:parents_and_keys][parent] = reflect_on_association(parent).foreign_key.intern
-      after_save do
-        record_dependent_history(parent)
+      options[:associations_and_keys][parent] = reflect_on_association(parent).foreign_key.intern
+      after_save do |record|
+        record.record_dependent_history(parent)
       end
-      after_destroy do
-        record_parent_remove(parent)
+      after_destroy do |record|
+        record.record_parent_remove(parent)
       end
     end
     define_history_options(options )
@@ -48,13 +48,10 @@ module ActsAsHistorical
 
   private
   def define_history_options(options)
-    options[:display] ||= {}
-    reflect_on_all_associations(:belongs_to).each do |assoc|
-      options[:display][assoc.foreign_key.intern] = :belongs_to_display
-    end
-    define_method(:history_options) do
+    define_singleton_method(:history_options) do
       options
     end
   end
+
 
 end

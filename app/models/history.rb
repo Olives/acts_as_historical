@@ -22,9 +22,12 @@ class History < ActiveRecord::Base
   belongs_to :history_editable, :polymorphic => true
   belongs_to :historical, :polymorphic => true
 
+  validates_presence_of :item_type, :historical_id, :historical_type
+
   class << self
-    def record_changes(options, model)
+    def record_changes(model, extra_options = {})
       editor = Thread.current[:actual_user]
+      options = (model.class.try(:history_options)||{}).merge(extra_options)
       after_hash = remove_unwanted_fields(options, model.attributes.dup)
       if model.changed_attributes.key?("id") || options[:add]
         before_hash = {}
@@ -32,26 +35,30 @@ class History < ActiveRecord::Base
         before_hash = remove_unwanted_fields(options, after_hash.merge(model.changed_attributes.dup))
       end
       item_type = model.class.to_s
-
       if (after_hash != before_hash || options[:remove]) && editor
-        parent_model = history_model(model, options[:parent])
-        history = new(:item_type => item_type, :historical_type => parent_model.class.to_s,
-                      :historical_id => parent_model.id, :history_editable => editor)
+        parent_model = options[:parent].present? ? options[:parent] : model
+
+        history = new(:item_type => item_type, :history_editable => editor)
+        if parent_model
+          history.historical_type = parent_model.class.to_s
+          history.historical_id = parent_model.id
+        end
         history.before = options[:remove] ? after_hash : before_hash
         history.after = options[:remove] ? {} : after_hash
 
         #If the model's history is stored on a parent, and the parent changes
         #Instead add a 'remove' history row for the old parent, and an 'add' for the new parent
-        save_history = true
-        if history.before.any? && history.after.any? && options[:parents_and_keys]
-          key = options[:parents_and_keys][options[:parent]]
-          if history.before[key] != history.after[key]
-            history.before_model.record_parent_remove(options[:parent]) if history.before[key]
-            history.after_model.record_parent_add(options[:parent]) if history.after[key]
-            save_history = false
+        key = options[:associations_and_keys] && options[:associations_and_keys][options[:association]]
+        if history.before.any? && history.after.any? && key && history.before[key] != history.after[key]
+          if history.before[key]
+            old_parent = history.before_model.send(options[:association])
+            create(:item_type => item_type, :historical_type => old_parent.class.to_s,
+                   :historical_id => old_parent.id, :history_editable => editor,
+                   :after => {}, :before => history.before)
           end
+          history.before = {} if history.after[key]
         end
-        history.save if save_history
+        history.save
       end
     end
 
@@ -65,17 +72,6 @@ class History < ActiveRecord::Base
         changes.delete_if{|k, v| !options[:only].include?(k) }
       end
       return changes
-    end
-
-    def history_model(model, option)
-      case option
-      when ActiveRecord::Base
-        option
-      when Symbol
-        model.send(option)
-      else
-        model
-      end
     end
 
   end

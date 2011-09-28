@@ -11,13 +11,22 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110921183926) do
+ActiveRecord::Schema.define(:version => 20110928180805) do
 
   create_table "dependent_models", :force => true do |t|
     t.string  "name"
     t.integer "watched_model_id"
     t.integer "second_watched_model_id"
     t.string  "status"
+  end
+
+  create_table "habtm_models", :force => true do |t|
+    t.string "code"
+  end
+
+  create_table "habtm_models_watched_models", :id => false, :force => true do |t|
+    t.integer "habtm_model_id"
+    t.integer "watched_model_id"
   end
 
   create_table "histories", :force => true do |t|

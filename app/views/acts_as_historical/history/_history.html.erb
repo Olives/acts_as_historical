@@ -18,19 +18,22 @@
         <dt><%= history.display_label(:dependent) %></dt>
       <% end %>
 
-      <% options = history.after_model.history_options %>
-      <% History.remove_unwanted_fields(options,  history.after.dup).each do |field, value| %>
-        <% unless field == :id || history.before[field] == value ||
-               (options[:display][field.intern] && history.after_model.send(options[:display][field.intern]).nil?) %>
+      <% options = history.item_type.constantize.history_options %>
+      <% fields = (history.after.empty? ? history.before : history.after) %>
+      <% History.remove_unwanted_fields(options,  fields.dup).each do |field, value| %>
+        <% unless field == :id || (history.before[field] == value && history.after.any?)  %>
 
           <dt class="indent"><%= field.to_s.humanize %> </dt>
           <dd>
+            <% display_method = (options[:display] && options[:display][field]) || field %>
             <% if history.before.key? field %>
-              <div><%= t "acts_as_historical.old_value", :value => history.before_model.send(field) %></div>
+              <div><%= t "acts_as_historical.old_value", :value => history.before_model.send(display_method) %></div>
             <% end %>
-            <div>
-              <%= t "acts_as_historical.new_value", :value => history.after_model.send(field) %>
-            </div>
+            <% if history.after.key? field %>
+              <div>
+                <%= t "acts_as_historical.new_value", :value => history.after_model.send(display_method) %>
+              </div>
+            <% end %>
           </dd>
         <% end %>
     <% end %>

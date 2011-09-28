@@ -21,7 +21,6 @@ describe History do
         h.historical.should eq f
         h.before.should be_empty
         f.attributes.each do |id, value|
-          next if id == "id"
           h.after[id.intern].should eq(value)
         end
       end
@@ -33,7 +32,6 @@ describe History do
         h = f.histories.last
         h.historical.should eq f
         f.attributes.each do |id, value|
-          next if id == "id"
           h.before[id.intern].should eq old_attributes[id]
           h.after[id.intern].should eq(value)
         end
@@ -61,7 +59,6 @@ describe History do
           h.item_type.should eq(d.class.to_s)
           h.historical.should eq parent
           d.attributes.each do |id, value|
-            next if id == "id"
             h.before[id.intern].should eq old_attributes[id]
             h.after[id.intern].should eq(value)
           end
@@ -78,7 +75,6 @@ describe History do
           h.historical.should eq parent
           h.before.should be_empty
           d.attributes.each do |id, value|
-            next if id == "id"
             h.after[id.intern].should eq(value)
           end
         end
@@ -95,7 +91,6 @@ describe History do
           h.historical.should eq parent
           h.after.should be_empty
           d.attributes.each do |id, value|
-            next if id == "id"
             h.before[id.intern].should eq value
           end
         end
@@ -113,14 +108,12 @@ describe History do
         h.item_type.should eq(d.class.to_s)
         h.after.should be_empty
         old_attributes.each do |id, value|
-          next if id == "id"
           h.before[id.intern].should eq value
         end
         h = w2.histories.last
         h.item_type.should eq(d.class.to_s)
         h.before.should be_empty
         d.attributes.each do |id, value|
-          next if id == "id"
           h.after[id.intern].should eq value
         end
 
@@ -130,15 +123,97 @@ describe History do
         h.item_type.should eq(d.class.to_s)
         h.after.should be_empty
         old_attributes.each do |id, value|
-          next if id == "id"
           h.before[id.intern].should eq value
         end
         h = s2.histories.last
         h.item_type.should eq(d.class.to_s)
         h.before.should be_empty
         d.attributes.each do |id, value|
-          next if id == "id"
           h.after[id.intern].should eq value
+        end
+      end
+
+      it "should add associations dependent's foreign key is changed from nil" do
+        w = FactoryGirl.create(:watched_model)
+        s = FactoryGirl.create(:second_watched_model)
+        d = FactoryGirl.create(:dependent_model, :second_watched_model => s)
+        d.update_attributes(:watched_model => w)
+        h = w.histories.last
+        h.item_type.should eq(d.class.to_s)
+        h.before.should be_empty
+        d.attributes.each do |id, value|
+          h.after[id.intern].should eq value
+        end
+      end
+
+      it "should remove associations dependent's foreign key is changed to nil" do
+        w = FactoryGirl.create(:watched_model)
+        s = FactoryGirl.create(:second_watched_model)
+        d = FactoryGirl.create(:dependent_model, :watched_model => w, :second_watched_model => s)
+        old_attributes = d.attributes
+        d.update_attributes(:watched_model => nil)
+        h = w.histories.last
+        h.item_type.should eq(d.class.to_s)
+        h.after.should be_empty
+        old_attributes.each do |id, value|
+          h.before[id.intern].should eq value
+        end
+      end
+
+    end
+
+    context "when a habtm association is changed" do
+      it "should add a record when a habtm record is added" do
+        w = FactoryGirl.create(:watched_model)
+        a = FactoryGirl.create(:habtm_model)
+        w.habtm_models << a
+        h = w.histories.last
+        h.item_type.should eq(a.class.to_s)
+        h.before.should be_empty
+        a.attributes.each do |id, value|
+          h.after[id.intern].should eq value
+        end
+      end
+
+      it "should add a record when multiple habtm records are added" do
+        w = FactoryGirl.create(:watched_model)
+        a1 = FactoryGirl.create(:habtm_model)
+        a2 = FactoryGirl.create(:habtm_model)
+        w.habtm_models.concat [a1,a2]
+        {w.histories.all[1] => a1, w.histories.all[2] => a2}.each do |h, a|
+          h.item_type.should eq(a.class.to_s)
+          h.before.should be_empty
+          a.attributes.each do |id, value|
+            h.after[id.intern].should eq value
+          end
+        end
+      end
+
+      it "should add a record when a habtm record is removed" do
+        w = FactoryGirl.create(:watched_model)
+        a = FactoryGirl.create(:habtm_model)
+        w.habtm_models << a
+        w.habtm_models.delete a
+        h = w.histories.last
+        h.item_type.should eq(a.class.to_s)
+        h.after.should be_empty
+        a.attributes.each do |id, value|
+          h.before[id.intern].should eq value
+        end
+      end
+
+      it "should add a records when multiple habtm records are removed" do
+        w = FactoryGirl.create(:watched_model)
+        a1 = FactoryGirl.create(:habtm_model)
+        a2 = FactoryGirl.create(:habtm_model)
+        w.habtm_models.concat [a1,a2]
+        w.habtm_models.delete([a1, a2])
+        {w.histories.all[3] => a1, w.histories.all[4] => a2}.each do |h, a|
+          h.item_type.should eq(a.class.to_s)
+          h.after.should be_empty
+          a.attributes.each do |id, value|
+            h.before[id.intern].should eq value
+          end
         end
       end
 
