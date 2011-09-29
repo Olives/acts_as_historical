@@ -4,5 +4,6 @@ Rails.application.routes.draw do
   resources :second_watched_models
   resources :dependent_models
 
-  mount ActsAsHistorical::Engine => "/history_engine"
+  history_at :history_engine
+
 end
