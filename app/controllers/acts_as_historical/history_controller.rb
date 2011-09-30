@@ -61,7 +61,7 @@ class ActsAsHistorical::HistoryController < ApplicationController
   end
 
   def date_range_parse
-    @date_range = params[:date_range] || Date.yesterday.to_s
+    @date_range = params[:date_range] || Date.today.to_s
     if @date_range.present?
       @start_date, @end_date = @date_range.split(" to ")
     end
