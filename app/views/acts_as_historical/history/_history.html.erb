@@ -24,7 +24,7 @@
         <% unless field == :id || (history.before[field] == value && history.after.any?) ||
                (options[:ignore] && options[:ignore].include?(field))  %>
 
-          <dt class="indent"><%= t "#{history.item_type.downcase}.#{field}" %> </dt>
+          <dt class="indent"><%= t "#{history.item_type.underscore}.#{field}" %> </dt>
           <dd>
             <% display_method = (options[:display] && options[:display][field]) || field %>
             <% if history.before.key? field %>
