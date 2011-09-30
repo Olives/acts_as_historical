@@ -22,7 +22,7 @@
       <% fields = (history.after.empty? ? history.before : history.after) %>
       <% History.remove_unwanted_fields(options,  fields.dup).each do |field, value| %>
         <% unless field == :id || (history.before[field] == value && history.after.any?) ||
-               (options[:except] && options[:except].include?(field))  %>
+               (options[:ignore] && options[:ignore].include?(field))  %>
 
           <dt class="indent"><%= t "#{history.item_type.downcase}.#{field}" %> </dt>
           <dd>
