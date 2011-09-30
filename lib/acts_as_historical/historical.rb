@@ -31,7 +31,7 @@ module ActsAsHistorical
     options[:associations_and_keys] = {}
     [parents].flatten.each do |parent|
       assoc = reflect_on_association(parent)
-      options[:associations_and_keys][parent] = assoc ? assoc.foreign_key.intern : options[:foreign_key][:parent]
+      options[:associations_and_keys][parent] = assoc ? assoc.foreign_key.intern : options[:foreign_key][parent]
       after_save do |record|
         record.record_dependent_history(parent) if record.changed?
       end
