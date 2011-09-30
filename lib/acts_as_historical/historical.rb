@@ -30,7 +30,8 @@ module ActsAsHistorical
   def acts_as_historical_dependent(parents, options={})
     options[:associations_and_keys] = {}
     [parents].flatten.each do |parent|
-      options[:associations_and_keys][parent] = reflect_on_association(parent).foreign_key.intern
+      assoc = reflect_on_association(parent)
+      options[:associations_and_keys][parent] = assoc ? assoc.foreign_key.intern : options[:foreign_key][:parent]
       after_save do |record|
         record.record_dependent_history(parent) if record.changed?
       end
