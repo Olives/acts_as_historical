@@ -21,7 +21,8 @@
       <% options = history.item_type.constantize.history_options %>
       <% fields = (history.after.empty? ? history.before : history.after) %>
       <% History.remove_unwanted_fields(options,  fields.dup).each do |field, value| %>
-        <% unless field == :id || (history.before[field] == value && history.after.any?)  %>
+        <% unless field == :id || (history.before[field] == value && history.after.any?) ||
+               options[:except].include?(field)  %>
 
           <dt class="indent"><%= t "#{history.item_type.downcase}.#{field}" %> </dt>
           <dd>
