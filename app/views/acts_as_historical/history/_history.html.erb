@@ -23,7 +23,7 @@
       <% History.remove_unwanted_fields(options,  fields.dup).each do |field, value| %>
         <% unless field == :id || (history.before[field] == value && history.after.any?)  %>
 
-          <dt class="indent"><%= field.to_s.humanize %> </dt>
+          <dt class="indent"><%= t "#{history.historical_type.downcase}.#{field}" %> </dt>
           <dd>
             <% display_method = (options[:display] && options[:display][field]) || field %>
             <% if history.before.key? field %>
