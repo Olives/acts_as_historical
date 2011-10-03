@@ -65,7 +65,7 @@ class History < ActiveRecord::Base
     def remove_unwanted_fields(options, changes)
       changes.symbolize_keys!
 
-      [(options[:except]||[]), [:updated_at, :created_at]].flatten.each do |unwanted_field|
+      [(options[:except]||[]), [:ar_association_key_name, :updated_at, :created_at]].flatten.each do |unwanted_field|
         changes.delete(unwanted_field.intern)
       end
       if options[:only]
