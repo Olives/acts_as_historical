@@ -2,7 +2,8 @@ module ActsAsHistorical
 
   module SaveHistory
 
-    #For has and belongs to many associations
+    # For has and belongs to many associations that want to be recorded, these need to be added
+    #  onto the before_add and before_remove hooks for the association itself.
     def record_add_dependent(dependent)
       History.record_changes(dependent, :parent => self, :add => true)
     end
