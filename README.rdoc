@@ -1,3 +1,95 @@
-= History
+= Acts As Historical
 
-This project rocks and uses MIT-LICENSE.
+An engine that takes care of tracking history and associations for models
+
+== Installation
+
+Just add acts_as_historical to the gemfile
+
+  gem 'acts_as_historical'
+
+== Routes
+
+To add the routes into the app, add the method
+
+  history_at :history
+
+to your route.rb
+This will put two routes in under the 'history' namespace
+
+  match 'history/for_editor/:id/:type'
+  match 'history/for_model/:id/:type'
+
+And they have path helpers of
+
+  history_for_editor_path
+  history_for_model_path
+
+respectively
+
+== Usage
+
+Simply put, just add `acts_as_historical` onto to any model you want to record the changes for, but there are some additional things you can do.
+
+If one of your models is dependent on another model, and as such you don't want to save the history on the dependent model, you can have the history be saved on the parent model instead. To do this on the dependent model just call
+
+  acts_as_historical_dependent(parents, options={})
+
+Where `parents` is a list of belongs_to associations, or a method that will be called on the model and must return the parent model. NOTE: if you include a parent that is called through a method, you need to also include a foreign key option that tells the engine what key to watch for this association.
+
+Example:
+  class Item < ActiveRecord::Base
+    belongs_to :store
+    acts_as_historical_dependent([:store, :product], {:foreign_key => {:product => :item_bar_code})
+
+    def product; Product.find_by_code(item_bar_code) ; end
+  end
+
+Options available for both methods:
+
+  only: An array of the only fields that should be saved
+  except: array fields that shouldn't be saved.
+  ignore: array of fields that will be saved, but never displayed in the ui.
+     this is useful for association data that is used to display other data, but itself doesn't change.
+     For instance, a belongs_to association that never changes would be a good choice to put here.
+  display: an hash of {attribute => method} where in the UI, instead of just displaying the attribute, it will
+     call the method given on the model created.
+     This is again useful for associations, so instead of displaying model_id = 1,
+     you might want to display model = "model's name"
+  foreign_key:  hash of {parent => attribute}. Maps methods to attributes if the parent method is not an association
+     i.e. parent can be :special_parent, and foreign_key: {:special_parent => :parent_id }
+     Thus whenever :parent_id changes, the association will be updated.
+
+
+If you need to record whenever a model from a has_and_belongs_to_many association is added you can add the following hooks to the association call:
+
+  class Users < ActiveRecord::Base
+    has_and_belongs_to_many :stores, :before_add => :record_add_dependent, :before_remove => :record_remove_dependent
+  end
+
+
+Also, every model that has history recorded for it using the above methods (except the has_and_belongs_to_many methods)
+has a few instance level methods added:
+
+    def history_type
+      self.class.to_s.titleize
+    end
+
+    def history_display(model=nil)
+      name
+    end
+
+    def history_label(model=nil)
+      I18n.t "acts_as_historical.display", :model => history_type, :value => history_display(model)
+    end
+
+Feel free to override these if they do not work for your models.
+
+= UI
+
+The field names will be put through the I18n.t translation methods. So to display the field "store_id" for the Item model an entry needs to be in the en.yml (or whatever langauge you want to use) of
+
+  item:
+    store_id: "Store"
+
+These fields need to be there for every field on the models you are using
