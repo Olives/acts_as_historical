@@ -80,7 +80,8 @@ class History < ActiveRecord::Base
     return @before_model if @before_model
     @before_model = item_type.constantize.new(before)
     @before_model.readonly!
-    @before_model[@before_model.primary_key] = before[@before_model.primary_key.to_sym]
+    primary_key = @before_model.class.primary_key
+    @before_model[primary_key] = before[primary_key.to_sym]
     @before_model
   end
 
@@ -88,7 +89,8 @@ class History < ActiveRecord::Base
     return @after_model if @after_model
     @after_model = item_type.constantize.new(after)
     @after_model.readonly!
-    @after_model[@after_model.primary_key] = after[@after_model.primary_key.to_sym]
+    primary_key = @after_model.class.primary_key
+    @after_model[primary_key] = after[primary_key.to_sym]
     @after_model
   end
 
