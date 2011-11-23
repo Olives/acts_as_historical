@@ -39,7 +39,7 @@ class ActsAsHistorical::HistoryController < ApplicationController
     end
     @editors.keys.each{|key| @editors[key].sort_by{|k,v| k.downcase}}
     @editors = @editors.sort_by{|k,v| k.downcase}
-    if @query_obj
+    if @query_objs
       @history = @history.with_editors(@query_objs, @query_type)
     end
   end
