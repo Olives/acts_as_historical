@@ -7,7 +7,7 @@ class ActsAsHistorical::HistoryController < ApplicationController
 
   def for_editor
     @by = "editor"
-    @history = History.includes(:historical).order("created_at DESC").with_editor(@history_obj)
+    @history = History.includes(:historical).order("created_at DESC").with_editors(@history_obj, @history_type)
     date_range_query
     @models = Hash.new{|h,k| h[k]=Hash.new(&h.default_proc)}
     @class_mapping = Hash.new{|h,k| h[k]=Hash.new(&h.default_proc)}
@@ -25,7 +25,7 @@ class ActsAsHistorical::HistoryController < ApplicationController
 
   def for_model
     @by = "model"
-    @history = History.includes(:history_editable).order("created_at DESC").with_model(@history_obj)
+    @history = History.includes(:history_editable).order("created_at DESC").with_models(@history_obj, @history_type)
     date_range_query
     @editors = Hash.new{|h,k| h[k]=Hash.new(&h.default_proc)}
     @class_mapping = Hash.new{|h,k| h[k]=Hash.new(&h.default_proc)}
@@ -57,7 +57,8 @@ class ActsAsHistorical::HistoryController < ApplicationController
   end
 
   def object_lookup
-    @history_obj = params[:type].downcase.classify.constantize.find params[:id]
+    @history_type = params[:type].downcase.classify
+    @history_obj = @history_type.constantize.find params[:id]
     if params[:query_type].present? && params[:query_id].present?
       @query_type = params[:query_type].downcase.classify
       @query_objs = @query_type.constantize.where :id => params[:query_id].split(",")
