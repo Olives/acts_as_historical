@@ -10,11 +10,12 @@ class ActsAsHistorical::HistoryController < ApplicationController
     @history = History.includes(:historical).order("created_at DESC").with_editors(@history_obj, @history_type)
     date_range_query
     @models = Hash.new{|h,k| h[k]=Hash.new(&h.default_proc)}
-    @class_mapping = Hash.new{|h,k| h[k]=Hash.new(&h.default_proc)}
+    @class_mapping = Hash.new{|h,k| h[k]=Hash.new}
     @history.each do |h|
       obj = h.historical
       @models[obj.history_type][obj.history_display] =  obj.id
-      @class_mapping[obj.class.to_s.underscore][obj.history_type] = obj.id
+      @class_mapping[obj.class.to_s.underscore][obj.history_type] ||= []
+      @class_mapping[obj.class.to_s.underscore][obj.history_type] << obj.id
     end
     if @query_objs
       @history = @history.with_models(@query_objs, @query_type)
@@ -28,14 +29,15 @@ class ActsAsHistorical::HistoryController < ApplicationController
     @history = History.includes(:history_editable).order("created_at DESC").with_models(@history_obj, @history_type)
     date_range_query
     @editors = Hash.new{|h,k| h[k]=Hash.new(&h.default_proc)}
-    @class_mapping = Hash.new{|h,k| h[k]=Hash.new(&h.default_proc)}
+    @class_mapping = Hash.new{|h,k| h[k]=Hash.new}
     @history.collect(&:history_editable).
       group_by{|g| [g.history_type, g.history_label, g.class.to_s.underscore]}.
       each_pair do |a, objs|
       type, display, klass = a
-      ids = objs.collect(&:id).join(",")
-      @editors[type][display] =  ids
-      @class_mapping[klass][type] = ids
+      ids = objs.collect(&:id)
+      @editors[type][display] =  ids.join(",")
+      @class_mapping[klass][type] ||= []
+      @class_mapping[klass][type].concat ids
     end
     @editors.keys.each{|key| @editors[key].sort_by{|k,v| k.downcase}}
     @editors = @editors.sort_by{|k,v| k.downcase}

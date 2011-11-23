@@ -28,7 +28,9 @@
     });
     $(function(){
       <% @class_mapping.each_pair do |klass,optgroup_mapping| %>
-        $("<%= optgroup_mapping.collect{|k,v| "optgroup[label='#{k}'] option[value='#{v}']"}.join(',') %>",
+        $("<%= optgroup_mapping.collect do |k,ids|
+                 ids.collect{|v| "optgroup[label='#{k}'] option[value='#{v}']"}
+               end.join(',') %>",
           "#query_selector").attr('data-class', '<%= klass %>')
       <% end %>
       <% if @query_obj %>
