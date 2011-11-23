@@ -10,12 +10,12 @@ class History < ActiveRecord::Base
     where(["created_at >= ? AND created_at < ?", start_at.utc, end_at.utc])
   }
 
-  scope :with_editor, lambda{ |model|
-    where(:history_editable_id => model.id, :history_editable_type => model.class.to_s)
+  scope :with_editors, lambda{ |models, type|
+    where(:history_editable_id => models.collect(&:id), :history_editable_type => type)
   }
 
-  scope :with_model, lambda { |model|
-    where(:historical_id => model.id, :historical_type => model.class.to_s)
+  scope :with_models, lambda { |models, type|
+    where(:historical_id => models.collect(&:id), :historical_type => type)
   }
 
 
