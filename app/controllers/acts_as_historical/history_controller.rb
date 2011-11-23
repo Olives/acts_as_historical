@@ -68,7 +68,7 @@ class ActsAsHistorical::HistoryController < ApplicationController
   end
 
   def date_range_parse
-    @date_range = params[:date_range] || Time.now.utc.to_date.to_s
+    @date_range = params[:date_range] || "#{Time.now.utc.beginning_of_month.to_date} to #{Time.now.utc.to_date}"
     if @date_range.present?
       @start_date, @end_date = @date_range.split(" to ")
     end
