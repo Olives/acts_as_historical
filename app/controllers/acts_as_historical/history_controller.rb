@@ -16,8 +16,8 @@ class ActsAsHistorical::HistoryController < ApplicationController
       @models[obj.history_type][obj.history_display] =  obj.id
       @class_mapping[obj.class.to_s.underscore][obj.history_type] = obj.id
     end
-    if @query_obj
-      @history = @history.with_model(@query_obj)
+    if @query_objs
+      @history = @history.with_models(@query_objs, @query_type)
     end
     @models.keys.each{|key| @models[key].sort_by{|k,v| k.downcase}}
     @models = @models.sort_by{|k,v| k.downcase}
@@ -29,15 +29,18 @@ class ActsAsHistorical::HistoryController < ApplicationController
     date_range_query
     @editors = Hash.new{|h,k| h[k]=Hash.new(&h.default_proc)}
     @class_mapping = Hash.new{|h,k| h[k]=Hash.new(&h.default_proc)}
-    @history.each do |h|
-      obj = h.history_editable
-      @editors[obj.history_type][obj.history_display] =  obj.id
-      @class_mapping[obj.class.to_s.underscore][obj.history_type] = obj.id
+    @history.collect(&:history_editable).
+      group_by{|g| [h.history_type, g.history_display, obj.class.to_s.underscore]}.
+      each_pair do |a, objs|
+      type, display, klass = a
+      ids = objs.colect(&:id).join(",")
+      @editors[type][display] =  ids
+      @class_mapping[klass][type] = ids
     end
     @editors.keys.each{|key| @editors[key].sort_by{|k,v| k.downcase}}
     @editors = @editors.sort_by{|k,v| k.downcase}
     if @query_obj
-      @history = @history.with_editor(@query_obj)
+      @history = @history.with_editors(@query_objs, @query_type)
     end
   end
 
@@ -56,7 +59,8 @@ class ActsAsHistorical::HistoryController < ApplicationController
   def object_lookup
     @history_obj = params[:type].downcase.classify.constantize.find params[:id]
     if params[:query_type].present? && params[:query_id].present?
-      @query_obj = params[:query_type].downcase.classify.constantize.find params[:query_id]
+      @query_type = params[:query_type].downcase.classify
+      @query_objs = @query_type.constantize.where :id => params[:query_id].split(",")
     end
   end
 
