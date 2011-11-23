@@ -37,7 +37,7 @@ class ActsAsHistorical::HistoryController < ApplicationController
       ids = objs.collect(&:id)
       @editors[type][display] =  ids.join(",")
       @class_mapping[klass][type] ||= []
-      @class_mapping[klass][type].concat ids
+      @class_mapping[klass][type] << ids.join(",")
     end
     @editors.keys.each{|key| @editors[key].sort_by{|k,v| k.downcase}}
     @editors = @editors.sort_by{|k,v| k.downcase}
