@@ -33,7 +33,7 @@ class ActsAsHistorical::HistoryController < ApplicationController
       group_by{|g| [g.history_type, g.history_display, g.class.to_s.underscore]}.
       each_pair do |a, objs|
       type, display, klass = a
-      ids = objs.colect(&:id).join(",")
+      ids = objs.collect(&:id).join(",")
       @editors[type][display] =  ids
       @class_mapping[klass][type] = ids
     end
