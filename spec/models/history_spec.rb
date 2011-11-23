@@ -3,11 +3,11 @@ require File.dirname(__FILE__) + '/../spec_helper'
 describe History do
 
   before(:each) do
-    Thread.current[:actual_user] = FactoryGirl.create(:user)
+    Thread.current[:current_user] = FactoryGirl.create(:user)
   end
 
   after :each do
-    Thread.current[:actual_user]= nil
+    Thread.current[:current_user]= nil
   end
 
   describe "#record_changes" do
