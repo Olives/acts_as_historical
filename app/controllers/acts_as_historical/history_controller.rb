@@ -30,7 +30,7 @@ class ActsAsHistorical::HistoryController < ApplicationController
     @editors = Hash.new{|h,k| h[k]=Hash.new(&h.default_proc)}
     @class_mapping = Hash.new{|h,k| h[k]=Hash.new(&h.default_proc)}
     @history.collect(&:history_editable).
-      group_by{|g| [h.history_type, g.history_display, obj.class.to_s.underscore]}.
+      group_by{|g| [g.history_type, g.history_display, obj.class.to_s.underscore]}.
       each_pair do |a, objs|
       type, display, klass = a
       ids = objs.colect(&:id).join(",")
