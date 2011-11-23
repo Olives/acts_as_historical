@@ -26,7 +26,7 @@ class History < ActiveRecord::Base
 
   class << self
     def record_changes(model, extra_options = {})
-      editor = Thread.current[:actual_user]
+      editor = Thread.current[:current_user]
       options = (model.class.try(:history_options)||{}).merge(extra_options)
       after_hash = remove_unwanted_fields(options, model.attributes.dup)
       if model.changed_attributes.key?("id") || options[:add]

@@ -4,7 +4,7 @@ class ApplicationController < ActionController::Base
   before_filter :set_user
 
   def set_user
-    Thread.current[:actual_user] = User.first
+    Thread.current[:current_user] = User.first
   end
 
 end
