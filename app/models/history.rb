@@ -11,11 +11,11 @@ class History < ActiveRecord::Base
   }
 
   scope :with_editors, lambda{ |models, type|
-    where(:history_editable_id => models.collect(&:id), :history_editable_type => type)
+    where(:history_editable_id => [models].flatten.collect(&:id), :history_editable_type => type)
   }
 
   scope :with_models, lambda { |models, type|
-    where(:historical_id => models.collect(&:id), :historical_type => type)
+    where(:historical_id => [models].flatten.collect(&:id), :historical_type => type)
   }
 
 
